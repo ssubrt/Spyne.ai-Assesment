@@ -3,14 +3,15 @@ import dbConnect from '@/dbConfig/dbConfig';
 import { ObjectId } from 'mongodb';
 import Car from '@/models/Car';
 
-// Adjust the context type to match the Next.js 13+ API
+// Handler for GET request
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect(); 
 
-    console.log('params id:', params.id);
+    const { id } = params;  // Extract `id` from params
+    console.log('params id:', id);
 
-    const car = await Car.findById(params.id);
+    const car = await Car.findById(id);
     if (!car) {
       return NextResponse.json({ message: 'Car not found' }, { status: 404 });
     }
@@ -22,14 +23,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
+// Handler for PUT request
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect(); 
 
+    const { id } = params;  // Extract `id` from params
     const { title, description, tags, images } = await req.json();
 
     const updatedCar = await Car.findByIdAndUpdate(
-      params.id,
+      id,
       { title, description, tags, images },
       { new: true }
     );
@@ -45,15 +48,18 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
+// Handler for DELETE request
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect();
 
-    if (!ObjectId.isValid(params.id)) {
+    const { id } = params;  // Extract `id` from params
+
+    if (!ObjectId.isValid(id)) {
       return NextResponse.json({ message: 'Invalid car ID' }, { status: 400 });
     }
 
-    const result = await Car.findByIdAndDelete(params.id);
+    const result = await Car.findByIdAndDelete(id);
 
     if (!result) {
       return NextResponse.json({ message: 'Car not found' }, { status: 404 });
