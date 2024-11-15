@@ -1,16 +1,13 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/dbConfig/dbConfig';
 import { ObjectId } from 'mongodb';
 import Car from '@/models/Car';
 
-
-
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
+// Adjust the context type to match the Next.js 13+ API
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect(); 
 
-    const { params } = context;
     console.log('params id:', params.id);
 
     const car = await Car.findById(params.id);
@@ -25,18 +22,16 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect(); 
 
-    const { params } = context;
-    const { title, description, tags,images } = await req.json();
+    const { title, description, tags, images } = await req.json();
 
-    // Use Mongoose method to update the car
     const updatedCar = await Car.findByIdAndUpdate(
       params.id,
-      { title, description, tags,images },
-      { new: true } 
+      { title, description, tags, images },
+      { new: true }
     );
 
     if (!updatedCar) {
@@ -54,12 +49,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     await dbConnect();
 
-    
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ message: 'Invalid car ID' }, { status: 400 });
     }
 
-    
     const result = await Car.findByIdAndDelete(params.id);
 
     if (!result) {
