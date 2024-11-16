@@ -9,14 +9,12 @@ import User from "@/models/model";
 
 
 
-dbConnect();
-
-
 
 export async function POST(request:NextRequest){
-    
+    await dbConnect();
     
     try {
+        
       
         const reqBody = await request.json();
         const {email,password}  = reqBody

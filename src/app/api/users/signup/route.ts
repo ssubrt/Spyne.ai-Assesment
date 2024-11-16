@@ -10,12 +10,8 @@ import User from "@/models/model";
 
 
 
-
-dbConnect();
-
-
 export async function POST(request:NextRequest){
-   
+   await dbConnect();
    
     try {
        
